@@ -77,7 +77,15 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   replicas: 2
-
+  listener:
+    ports: {}
+    tls:
+      enabled: false
+  volumes: {}
+  replicas: 2
+  oidcServer:
+    tls:
+      enabled: false
 ---
 # [NOTE] This is a partial authorino Deployment resource. The purpose is that argocd
 # patches (merge) the authorino-operator owned Deployment with this partial resource
