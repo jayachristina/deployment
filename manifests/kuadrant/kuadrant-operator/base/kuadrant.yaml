@@ -81,8 +81,6 @@ spec:
     ports: {}
     tls:
       enabled: false
-  volumes: {}
-  replicas: 2
   oidcServer:
     tls:
       enabled: false
