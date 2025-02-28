@@ -1,4 +1,6 @@
 *.retry
+**/inventories/inventory
+**/inventories/inventory-*
 
 .vscode
 
