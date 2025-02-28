@@ -1,0 +1,20 @@
+apiVersion: kuadrant.io/v1
+kind: DNSPolicy
+metadata:
+  name: prod-web-dnspolicy
+  namespace: ingress-gateway
+spec:
+  healthCheck:
+    failureThreshold: 3
+    interval: 1m
+    path: /health
+  loadBalancing:
+    defaultGeo: true
+    geo: {{ ocp4_workload_connectivity_link_gateway_geo_code }}
+    weight: 120
+  targetRef:
+    name: prod-web
+    group: gateway.networking.k8s.io
+    kind: Gateway
+  providerRefs:
+  - name: prod-web-aws-credentials

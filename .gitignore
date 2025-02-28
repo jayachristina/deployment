@@ -1,4 +1,9 @@
-bin
-tmp
-kubeconfig
-**/charts
+*.retry
+
+.vscode
+
+.ansible-lint
+
+**/user-data.yaml
+
+**/__pycache__

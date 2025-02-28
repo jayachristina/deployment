@@ -1,0 +1,63 @@
+---
+
+- name: setup _cluster_type
+  ansible.builtin.set_fact:
+    SETUP: "{{ SETUP }}"
+
+- name: Print message
+  debug:
+    msg: SETUP is {{ SETUP }}
+
+- name: AWS Route53 setup
+  ansible.builtin.include_tasks: 
+    file: aws-setup.yml
+  when: SETUP == "HUB" or SETUP == "DEMO"
+
+
+- name: User workload monitoring
+  ansible.builtin.include_tasks: user_workload_monitoring.yml
+  when: SETUP == "HUB" or SETUP == "SPOKE" 
+
+- name: Install OpenShift Gitops
+  ansible.builtin.include_tasks: openshift_gitops.yml
+  when: SETUP == "HUB" or SETUP == "SPOKE" 
+
+- name: Enable HELM and kustomizeBuildOptions
+  ansible.builtin.shell:
+    cmd: oc  -n openshift-gitops patch argocd openshift-gitops --type=json -p='[{"op":"add","path":"/spec/kustomizeBuildOptions","value":"--enable-helm"}]'
+  when: SETUP == "HUB" or SETUP == "SPOKE" 
+  
+
+- name: Setup OpenShift Gitops
+  ansible.builtin.include_tasks: openshift_gitops_setup.yml
+  when: SETUP == "HUB" 
+
+
+- name: Install Ingress gateway
+  ansible.builtin.include_tasks: ingress_gateway.yml
+  when: SETUP == "DEMO" 
+
+- name: Install Echo API Application
+  ansible.builtin.include_tasks: echo_api.yml
+  when: SETUP == "DEMO" 
+
+
+# - name: Install Cert Manager
+#   ansible.builtin.include_tasks: cert-manager.yml
+
+# - name: Install Kuadrant
+#   ansible.builtin.include_tasks: kuadrant.yml
+
+# - name: Install Service mesh  and Istio
+#   ansible.builtin.include_tasks: servicemesh.yml
+
+# - name: Install Observability
+#   ansible.builtin.include_tasks: observability.yaml
+
+# # - name: Install RHSSO
+# #   ansible.builtin.include_tasks: rhsso.yml
+
+# # - name: Install Apicurio Studio
+# #   ansible.builtin.include_tasks: apicurio_studio.yml
+
+
